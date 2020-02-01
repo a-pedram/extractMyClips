@@ -5,7 +5,7 @@ then
 	echo $usage
 	exit 1
 fi
-if test -f $2
+if  [[ ! -f ${2} ]]
 then
 	echo "$2 was Not Found!"
 	echo $usage
