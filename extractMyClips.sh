@@ -1,5 +1,16 @@
 #!/bin/bash
-echo "$1"
+usage="Usage: extractMyClips.sh bookTitle clippingFile.txt"
+if [ $# -ne 2 ] 
+then
+	echo $usage
+	exit 1
+fi
+if test -f $2
+then
+	echo "$2 was Not Found!"
+	echo $usage
+	exit 1
+fi
 awk -v title="$1" 'BEGIN{i=0;PRN=0;j=1}
 {
 	if( index($0, "===") )
@@ -26,5 +37,5 @@ awk -v title="$1" 'BEGIN{i=0;PRN=0;j=1}
 			}
 		}  
 	}
-}' My\ Clippings.txt 
+}' "$2"
 
