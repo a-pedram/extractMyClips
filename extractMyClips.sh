@@ -1,17 +1,39 @@
 #!/bin/bash
-usage="Usage: extractMyClips.sh bookTitle clippingFile.txt"
-if [ $# -ne 2 ] 
-then
-	echo $usage
+exitNHelp()
+{
+	echo -e $usage
 	exit 1
-fi
-if  [[ ! -f ${2} ]]
+}
+
+usage="\nUsage: extractMyClips.sh [arguments] bookTitle clippingFile.txt \n\n
+Arguments: \n\n
+-h \tShow this help \n
+-l \tinclude clipping locations in the output\n"
+if [ $# -lt 2 ]
 then
-	echo "$2 was Not Found!"
-	echo $usage
-	exit 1
+	exitNHelp
 fi
-awk -v title="$1" 'BEGIN{i=0;PRN=0;j=1}
+if [[ ${1} == "-h" ]]
+then
+	exitNHelp
+fi
+if [[ ${1} == "-l" ]]
+then
+	location=1
+	title="${2}"
+	file="${3}"
+else
+	location=0
+	title="${1}"
+	file="${2}"
+fi
+echo "---$file --- $title"
+if  [[ ! -f $file ]]
+then
+	echo "$file was Not Found!"
+	exitNHelp
+fi
+awk -v title="$title" -v location="$location" 'BEGIN{i=0;PRN=0;j=1}
 {
 	if( index($0, "===") )
 	{
@@ -29,7 +51,12 @@ awk -v title="$1" 'BEGIN{i=0;PRN=0;j=1}
 			if (PRN == 1)
 			{
 				PRN++;
-				print "\n",j,":"
+				if(location == 1) 
+					loc = $0;
+				else
+					loc = ""
+
+				print "\n",j,":",loc
 			}
 			else
 			{
@@ -37,5 +64,5 @@ awk -v title="$1" 'BEGIN{i=0;PRN=0;j=1}
 			}
 		}  
 	}
-}' "$2"
+}' "$file"
 
